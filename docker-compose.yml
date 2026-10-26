@@ -1,0 +1,21 @@
+services:
+  db:
+    # Official Postgres 16 image with the pgvector extension pre-installed
+    image: pgvector/pgvector:pg16
+    container_name: suitup-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-suitup}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-suitup_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-suitup}
+    ports:
+      - "5433:5432"  # host 5433 avoids clashing with a locally installed Postgres
+    volumes:
+      - suitup_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-suitup}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  suitup_pgdata:
